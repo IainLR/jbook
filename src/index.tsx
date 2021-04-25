@@ -9,7 +9,7 @@ const App = () => {
 
   const startService = async () => {
     // esbuild initialization, going into public dir for URL
-    // const service
+    // const service replaced with ref.current
     ref.current = await esbuild.startService({
       worker: true,
       wasmURL: '/esbuild.wasm',
@@ -20,12 +20,17 @@ const App = () => {
     startService()
   }, [])
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (!ref.current) {
       return
     }
+    //transform() handles transpiling, not bundling
+    const result = await ref.current.transform(input, {
+      loader: 'jsx',
+      target: 'es2015',
+    })
 
-    console.log(ref.current)
+    setCode(result.code)
   }
 
   return (
